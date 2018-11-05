@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>DFP for GTM</title>
     <style>
-        /*.adGeekAd iframe {
+        .adGeekAd iframe {
             background-color: #faa;
-        }*/
+        }
     </style>
 </head>
 
@@ -47,7 +47,7 @@
             wait: 15 // 至少等待幾秒 [setTimeout]
         }];
 
-        const MainIIFE = ((w, adsBlock) => {
+        const MainFunction = ((w, adsBlock) => {
             /// ========== [ Create DFP head defineSlot Lib ] ========== ///
 
             /*---------- create DFP lib gpt.js ----------*/
@@ -69,7 +69,7 @@
                     let adsUnMapping = adsMainDef.addService(googletag.pubads());
                     let adsMapping = adsMainDef.defineSizeMapping(B.mapping).addService(googletag.pubads());
 
-                    B.mapping == '' ? adsMapping : adsMapping;
+                    B.mapping == '' ? adsUnMapping : adsMapping;
                 }
                 /// ========== [ DFP event ] ========== ///
                 /*googletag.pubads().addEventListener('slotRenderEnded', function(event) {
