@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DFP for GTM</title>
+    <style>
+        /*.adGeekAd iframe {
+            background-color: #faa;
+        }*/
+    </style>
+</head>
+
+<body>
+    <div id="AdUnit">
+        <div id="one">123</div>
+        <div id="two">456</div>
+        <div id="three">789</div>
+    </div>
+    <script>
+        /// ========== 廣告區塊資訊 (Main Object) ========== ///
+        let adsBlock = [{
+            note: '[首頁] 右側欄第一則 336*280 廣告', // 無作用欄位 類似註解 方便查詢
+            divid: 'index_rightSideBarFirst_336280', // 廣告區塊 id 名稱
+            divclass: 'adGeekAd widget', //廣告區塊 class 名稱
+            defslot: '/19597162/info_336280_1', // DFP adUnit name
+            id: 'div-gpt-ad-1531896988226-8', // DFP adUnit id
+            size: [300, 250], // DFP adUnit Size -> exp. one size [336, 280], two size [[336, 280], [300, 250]]...
+            mapping: '', // If RWD? [mapping array] : ''
+            dom: '#two', // 廣告要 pendDOM 位置
+            place: 'before', // after, before, html, append, prepend
+            stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;', // CSS
+            wait: '' // 至少等待幾秒 [setTimeout]
+        }, {
+            note: '[首頁] 右側欄第2則 336*280 廣告', // 無作用欄位 類似註解 方便查詢
+            divid: 'index_rightSideBarFirst_336280', // 廣告區塊 id 名稱
+            divclass: 'adGeekAd widget', //廣告區塊 class 名稱
+            defslot: '/19597162/info_336280_2', // DFP adUnit name
+            id: 'div-gpt-ad-1531896988226-9', // DFP adUnit id
+            size: [336, 280], // DFP adUnit Size -> exp. one size [336, 280], two size [[336, 280], [300, 250]]...
+            mapping: '', // If RWD? [mapping array] : ''
+            dom: '#DFP-index_rightSideBarFirst_336280', // 廣告要 pendDOM 位置
+            place: 'after', // after, before, html, append, prepend
+            stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;', // CSS
+            wait: 15 // 至少等待幾秒 [setTimeout]
+        }];
+
+        const MainIIFE = ((w, adsBlock) => {
+            /// ========== [ Create DFP head defineSlot Lib ] ========== ///
+
+            /*---------- create DFP lib gpt.js ----------*/
+            let s1 = document.createElement("script");
+            s1.type = "text/javascript";
+            s1.async = true;
+            s1.src = "https://www.googletagservices.com/tag/js/gpt.js";
+            document.head.appendChild(s1);
+
+            /*---------- create googletag.cmd ----------*/
+            let s2 = document.createElement("script");
+            s2.innerHTML = 'var googletag = googletag || {};googletag.cmd = googletag.cmd || [];';
+            document.head.appendChild(s2);
+
+            /// ========== [ create googletag.cmd.push] ========== ///
+            googletag.cmd.push(function() {
+                for (let B of adsBlock) {
+                    let adsMainDef = googletag.defineSlot(B.defslot, B.size, B.id);
+                    let adsUnMapping = adsMainDef.addService(googletag.pubads());
+                    let adsMapping = adsMainDef.defineSizeMapping(B.mapping).addService(googletag.pubads());
+
+                    B.mapping == '' ? adsMapping : adsMapping;
+                }
+                /// ========== [ DFP event ] ========== ///
+                /*googletag.pubads().addEventListener('slotRenderEnded', function(event) {
+                    //console.log('DFP Event:' + event.slot.getSlotElementId());
+                    if (event.slot.getSlotElementId() == 'div-gpt-ad-1513767903209-4') {
+                        if (!event.isEmpty) { //如果 DFP 版位 不為 空版
+                            console.log('adUnit not Empty');
+                        }else{
+                            console.log('adUnit is Empty');
+                        }
+                    }
+                }); */
+                googletag.pubads().enableSingleRequest();
+                googletag.pubads().collapseEmptyDivs();
+                googletag.enableServices();
+            });
+
+            /// ========== [ Create init function ] ========== ///
+
+            let initDfp = (AdDom, AdBody, place, times) => {
+                times ? times : 0;
+                let CheckAdDom = () => {
+                    if (AdDom) {
+                        switch (place) {
+                            case 'before':
+                                AdDom.parentNode.insertBefore(AdBody, AdDom);
+                                break;
+                            case 'after':
+                                AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
+                                break;
+                            case 'html':
+                                AdDom.innerHTML = '';
+                                AdDom.appendChild(AdBody);
+                                break;
+                            case 'append':
+                                AdDom.appendChild(AdBody);
+                                break;
+                            case 'prepend':
+                                AdDom.insertBefore(AdBody, AdDom.firstChild);
+                                break;
+                        }
+                    } else {
+                        if (times > 0) {
+                            times--;
+                            setTimeout(CheckAdDom, 500);
+                        }
+                    }
+                }
+                CheckAdDom();
+            }
+
+            /// ========== [ Create DFP Body DOM ] ========== ///
+
+            for (let B of adsBlock) {
+                /* ---------- create Outer divDom ---------- */
+                let AdDom = document.querySelector(B.dom);
+                let AdBody = document.createElement('div');
+                AdBody.id = `DFP-${B.divid}`;
+                AdBody.className = B.divclass;
+                AdBody.style = B.stycss
+
+                /* ---------- create Inner divDom ---------- */
+                let AdBodyInnerDiv = document.createElement('div');
+                AdBodyInnerDiv.id = B.id;
+
+                /* ---------- create Inner script ---------- */
+                let AdBodyInnerScript = document.createElement('script');
+                AdBodyInnerScript.text = `googletag.cmd.push(function() {googletag.display('${B.id}');});`
+
+                /* ---------- append Inner Dom & script ---------- */
+                AdBodyInnerDiv.appendChild(AdBodyInnerScript);
+                AdBody.appendChild(AdBodyInnerDiv);
+
+                /* ---------- Call initDfp Function ----------*/
+                initDfp(AdDom, AdBody, B.place, B.wait);
+            }
+        })(window, adsBlock);
+    </script>
+</body>
+
+</html>
