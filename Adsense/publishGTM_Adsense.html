@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Adsense for GTM</title>
+    <style>
+        .makAd iframe {
+            background-color: #faa;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="AdUnit">
+        <div id="one">123</div>
+        <div id="two">456</div>
+        <div id="three">789</div>
+    </div>
+
+    <!-- Original Code [Asynchronous code (非同步)]
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <div id="Adsense-test-adUnit" class="makAd" style="margin:0;">
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:300px;height:250px" {stycss}
+            data-ad_region="test"
+            data-refresh="false"
+            data-ad-host="ca-host-pub-xxxxxxxxxxxxxxxx" {adhost}
+            data-ad-host-channel="0000000000" {adhostchannel}
+            data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" {adclient}
+            data-ad-slot="1234567890"> {adslot}
+        </ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    -->
+
+    <script>
+        /// ========== 廣告區塊資訊 (Main Object) ========== ///
+        let adsBlock_adsense = [{
+            note: '[TEST] TEST 廣告', // 無作用欄位 類似註解 方便查詢
+            divid: 'test-adUnit-1', // 廣告區塊 id 名稱
+            divclass: 'makAd', // 廣告區塊 class 名稱
+            divstycss: 'margin:0', // 廣告區塊 css
+            stycss: 'display:inline-block;width:300px;height:250px;', // adsense <ins> css
+            adhost: 'ca-host-pub-xxxxxxxxxxxxxxxx',
+            adhostchannel: '0000000000',
+            adclient: 'ca-pub-xxxxxxxxxxxxxxxx',
+            adslot: '1234567890',
+            dom: '#two', // 廣告要 pendDOM 位置
+            place: 'prepend', // after, before, html, append, prepend
+            wait: '' // 至少等待幾秒 [setTimeout]
+        }, {
+            note: '[TEST] TEST 廣告', // 無作用欄位 類似註解 方便查詢
+            divid: 'test-adUnit-2', // 廣告區塊 id 名稱
+            divclass: 'makAd', // 廣告區塊 class 名稱
+            divstycss: 'margin:0', // 廣告區塊 css
+            stycss: 'display:inline-block;width:300px;height:250px;', // adsense <ins> css
+            adhost: 'ca-host-pub-xxxxxxxxxxxxxxxx',
+            adhostchannel: '0000000000',
+            adclient: 'ca-pub-xxxxxxxxxxxxxxxx',
+            adslot: '1234567890',
+            dom: '#Adsense-test-adUnit-1', // 廣告要 pendDOM 位置
+            place: 'after', // after, before, html, append, prepend
+            wait: 15 // 至少等待幾秒 [setTimeout]
+        }];
+
+        const MainFunction = ((w, adsBlock) => {
+            /// ========== [ Create Adsense Lib (adsbygoogle.js) ] ========== ///
+            let asLib = document.createElement("script");
+            asLib.type = "text/javascript";
+            asLib.async = true;
+            asLib.src = "//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+            document.head.appendChild(asLib);
+
+            /// ========== [ Create init function ] ========== ///
+
+            let initAdsense = (AdDom, AdBody, place, times) => {
+                times ? times : 0;
+                let CheckAdDom_adsense = function() {
+                    if (AdDom) {
+                        switch (place) {
+                            case 'before':
+                                AdDom.parentNode.insertBefore(AdBody, AdDom);
+                                break;
+                            case 'after':
+                                AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
+                                break;
+                            case 'html':
+                                AdDom.innerHTML = '';
+                                AdDom.appendChild(AdBody);
+                                break;
+                            case 'append':
+                                AdDom.appendChild(AdBody);
+                                break;
+                            case 'prepend':
+                                AdDom.insertBefore(AdBody, AdDom.firstChild);
+                                break;
+                        }
+                    } else {
+                        if (times > 0) {
+                            times--;
+                            setTimeout(CheckAdDom_adsense, 500);
+                        }
+                    }
+                }
+                CheckAdDom_adsense();
+            }
+
+            /// ========== [ Create Adsense Body DOM ] ========== ///
+
+            for (let B of adsBlock_adsense) {
+                /* ---------- create Outer divDom ---------- */
+                let AdDom = document.querySelector(B.dom);
+                let AdBody = document.createElement('div');
+                AdBody.id = `Adsense-${B.divid}`;
+                AdBody.className = B.divclass;
+                AdBody.style = B.divstycss
+
+                /* ---------- create Inner divDom <ins>  ---------- */
+                let InsTag = document.createElement('ins');
+                InsTag.className = 'adsbygoogle';
+                InsTag.style = B.stycss;
+                InsTag.setAttribute('data-ad_region', 'test');
+                InsTag.setAttribute('data-refresh', 'false');
+                InsTag.setAttribute('data-ad-host', B.adhost);
+                InsTag.setAttribute('data-ad-host-channel', B.adhostchannel);
+                InsTag.setAttribute('data-ad-client', B.adclient);
+                InsTag.setAttribute('data-ad-slot', B.adslot);
+
+                /* ---------- create Inner script ---------- */
+                let AdBodyInnerScript = document.createElement('script');
+                AdBodyInnerScript.text = `(adsbygoogle = window.adsbygoogle || []).push({});`;
+
+                /* ---------- append Inner Dom <ins> & script ---------- */
+                AdBody.appendChild(InsTag);
+                AdBody.appendChild(AdBodyInnerScript);
+
+                /* ---------- Call initDfp Function ----------*/
+                initAdsense(AdDom, AdBody, B.place, B.wait);
+            }
+        })(window, adsBlock_adsense);
+    </script>
+</body>
+
+</html>
