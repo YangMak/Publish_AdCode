@@ -69,7 +69,9 @@
         }];
 
         const MainFunction = ((w, adsBlock) => {
+
             /// ========== [ Create Adsense Lib (adsbygoogle.js) ] ========== ///
+
             let asLib = document.createElement("script");
             asLib.type = "text/javascript";
             asLib.async = true;
@@ -139,7 +141,7 @@
                 AdBody.appendChild(InsTag);
                 AdBody.appendChild(AdBodyInnerScript);
 
-                /* ---------- Call initDfp Function ----------*/
+                /* ---------- Call initAdsense Function ----------*/
                 initAdsense(AdDom, AdBody, B.place, B.wait);
             }
         })(window, adsBlock_adsense);
