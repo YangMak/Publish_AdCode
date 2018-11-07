@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tenmax for Gtm</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+</head>
+
+<body>
+    <div id="AdUnit">
+        <div id="one">123</div>
+        <div id="two">456</div>
+        <div id="three">789</div>
+    </div>
+
+    <!-- Original Code [native ads]
+    <div id="Tenmax-tenmax-test" class="makAd" style="margin:0">
+        <div id="tenmax_{347cd23d4303484b}{adslot}"></div>
+        <ins class="rmax"
+            data-rmax-space-id="{347cd23d4303484b}{adslot}"
+            data-rmax-space-type="NATIVE"
+            data-target-id="{#tenmax_347cd23d4303484b}{adtargetid}"
+            data-target-pos="{AFTER}{adtargetpos}">
+        </ins>
+        <script async="async" src="//tenmax-static.cacafly.net/ssp/adsbytenmax.js"></script>
+    <div>    
+-->
+
+    <script>
+        var adsBlock_tenmax = [{
+            note: '[TEST] TEST 廣告',
+            divid: 'tenmax-test',
+            divclass: 'makAd',
+            adslot: '347cd23d4303484b',
+            adtargetid: '#tenmax_347cd23d4303484b3',
+            adtargetpos: 'AFTER',
+            dom: '#two',
+            place: 'after',
+            stycss: 'margin:0',
+            wait: ''
+        }, {
+            note: '[TEST] TEST 廣告',
+            divid: 'tenmax-test',
+            divclass: 'makAd',
+            adslot: '347cd23d4303484b',
+            adtargetid: '#tenmax_347cd23d4303484b',
+            adtargetpos: 'AFTER',
+            dom: '#three',
+            place: 'prepend',
+            stycss: 'margin:0',
+            wait: ''
+        }];
+
+        const MainFunction = ((w, adsBlock) => {
+
+            /// ========== [ Create init function ] ========== ///
+
+            let initTenmax = (AdDom, AdBody, place, times) => {
+                times ? times : 0;
+                var CheckAdDom_tenmax = function() {
+                    if (AdDom) {
+                        switch (place) {
+                            case 'before':
+                                AdDom.parentNode.insertBefore(AdBody, AdDom);
+                                break;
+                            case 'after':
+                                AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
+                                break;
+                            case 'html':
+                                AdDom.innerHTML = '';
+                                AdDom.appendChild(AdBody);
+                                break;
+                            case 'append':
+                                AdDom.appendChild(AdBody);
+                                break;
+                            case 'prepend':
+                                AdDom.insertBefore(AdBody, AdDom.firstChild);
+                                break;
+                        }
+                    } else {
+                        if (times > 0) {
+                            times--;
+                            setTimeout(CheckAdDom_tenmax, 500);
+                        }
+                    }
+                }
+                CheckAdDom_tenmax();
+            }
+
+            /// ========== [ Create Adsense Body DOM ] ========== ///
+
+            for (let B of adsBlock_tenmax) {
+                /* ---------- create Outer divDom ---------- */
+                let AdDom = document.querySelector(B.dom);
+                let AdBody = document.createElement('div');
+                AdBody.id = `Tenmax-${B.divid}`;
+                AdBody.className = B.divclass;
+                AdBody.style = B.divstycss
+
+                /* ---------- create Inner divDom ---------- */
+                let TenmaxDiv = document.createElement('div');
+                TenmaxDiv.id = `tenmax_${B.adslot}`;
+
+                /* ---------- create Inner divDom <ins>  ---------- */
+                let InsTag = document.createElement('ins');
+                InsTag.className = 'rmax';
+                InsTag.setAttribute('data-rmax-space-id', B.adslot);
+                InsTag.setAttribute('data-rmax-space-type', 'NATIVE');
+                InsTag.setAttribute('data-target-id', `#${TenmaxDiv.id}`);
+                InsTag.setAttribute('data-target-pos', B.adtargetpos);
+
+                /* ---------- create Tenmax script ---------- */
+                let TenmaxScripts = document.createElement('script');
+                TenmaxScripts.type = 'text/javascript';
+                TenmaxScripts.charset = "utf-8";
+                TenmaxScripts.async = true;
+                TenmaxScripts.src = '//tenmax-static.cacafly.net/ssp/adsbytenmax.js';
+
+                /* ---------- append Inner Dom <div> <ins> & script ---------- */
+                AdBody.appendChild(TenmaxDiv);
+                AdBody.appendChild(InsTag);
+                AdBody.appendChild(TenmaxScripts);
+
+                /* ---------- Call initTenmax Function ----------*/
+                initTenmax(AdDom, AdBody, B.place, B.wait);
+            }
+        })(window, adsBlock_tenmax);
+    </script>
+</body>
+
+</html>
