@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dable for GTM</title>
+</head>
+
+<body>
+    <div id="AdUnit">
+        <div id="one">123</div>
+        <div id="two">456</div>
+        <div id="three">789</div>
+    </div>
+
+    <!-- Original Code
+    <div id="dable-infoBottom" class="makAd" style="margin:0;">    
+        <div id="dablewidget_{6XgOZLXN}{idnum}" data-widget_id="{6XgOZLXN}{idnum}">
+            <script>
+                (function(d,a){
+                    d[a]=d[a] || function(){
+                        (d[a].q=d[a].q || []).push(arguments)
+                    };
+                }(window,'dable'));
+                dable('renderWidget', 'dablewidget_{6XgOZLXN}{idnum}');
+            </script>
+        </div>
+    </div>
+-->
+
+    <script>
+        /// ========== 廣告區塊資訊 (Main Object) ========== ///
+        let adsBlock_dable = [{
+            note: '[文章] 底下資訊區塊下方 dable 廣告',
+            divid: 'dable-infoBottom',
+            divclass: 'makAd',
+            idnum: '3o5006Xj',
+            dom: '#two',
+            place: 'append',
+            stycss: 'margin:0',
+            wait: ''
+        }, {
+            note: '[文章] 右欄熱門文章下方 dable 廣告',
+            divid: 'dable-rightside',
+            divclass: 'makAd',
+            idnum: '2XnQQEld',
+            dom: '#Dable-dable-infoBottom',
+            place: 'after',
+            stycss: '',
+            wait: 5
+        }];
+
+        const MainFunction = ((w, adsBlock) => {
+
+            /// ========== [ Create init function ] ========== ///
+
+            let initDable = (AdDom, AdBody, place, times) => {
+                times ? times : 0;
+                let CheckAdDom_dable = function() {
+                    if (AdDom) {
+                        switch (place) {
+                            case 'before':
+                                AdDom.parentNode.insertBefore(AdBody, AdDom);
+                                break;
+                            case 'after':
+                                AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
+                                break;
+                            case 'html':
+                                AdDom.innerHTML = '';
+                                AdDom.appendChild(AdBody);
+                                break;
+                            case 'append':
+                                AdDom.appendChild(AdBody);
+                                break;
+                            case 'prepend':
+                                AdDom.insertBefore(AdBody, AdDom.firstChild);
+                                break;
+                        }
+                    } else {
+                        if (times > 0) {
+                            times--;
+                            setTimeout(CheckAdDom_dable, 500);
+                        }
+                    }
+                }
+                CheckAdDom_dable();
+            }
+
+            /// ========== [ Create Adsense Body DOM ] ========== ///
+
+            for (let B of adsBlock_dable) {
+                /* ---------- create Outer divDom ---------- */
+                let AdDom = document.querySelector(B.dom);
+                let AdBody = document.createElement('div');
+                AdBody.id = `Dable-${B.divid}`;
+                AdBody.className = B.divclass;
+                AdBody.style = B.divstycss
+
+                /* ---------- create Inner divDom ---------- */
+                let DableDiv = document.createElement('div');
+                DableDiv.id = `dablewidget_${B.idnum}`;
+                DableDiv.setAttribute('data-widget_id', B.idnum);
+
+                /* ---------- create Dable script ---------- */
+                let DableScript = document.createElement('script');
+                DableScript.text = `(function(d,a){d[a]=d[a] || function(){(d[a].q=d[a].q || []).push(arguments)};}(window,'dable'));
+                dable('renderWidget', 'dablewidget_${B.idnum}');`;
+
+                /* ---------- append Dable Dom  & script ---------- */
+                DableDiv.appendChild(DableScript);
+                AdBody.appendChild(DableDiv);
+
+                /* ---------- Call initDable Function ----------*/
+                initDable(AdDom, AdBody, B.place, B.wait);
+            }
+        })(window, adsBlock_dable);
+    </script>
+</body>
+
+</html>
