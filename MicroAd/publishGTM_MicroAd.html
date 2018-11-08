@@ -39,7 +39,7 @@
             divid: 'microad-test',
             divclass: 'makAd',
             adslot: '4279417',
-            dom: 'body',
+            dom: '#one',
             place: 'prepend',
             stycss: 'margin:0',
             wait: ''
@@ -93,20 +93,21 @@
             /// ========== [ Create Adsense Body DOM ] ========== ///
 
             for (let B of adsBlock_microad) {
-                /* ---------- create Outer divDom ---------- */
-                let AdDom = document.querySelector(B.dom);
-                let AdBody = document.createElement('div');
-                AdBody.id = `MicroAd-${B.divid}`;
-                AdBody.className = B.divclass;
-                AdBody.style = B.divstycss
+                let AdDom = document.querySelectorAll(B.dom).forEach((AdDom) => {
 
-                /* ---------- create Inner divDom ---------- */
-                let MicroAdDiv = document.createElement('div');
-                MicroAdDiv.id = `compass-fit-${B.adslot}`;
+                    /* ---------- create Outer divDom ---------- */
+                    let AdBody = document.createElement('div');
+                    AdBody.id = `MicroAd-${B.divid}`;
+                    AdBody.className = B.divclass;
+                    AdBody.style = B.divstycss
 
-                /* ---------- create MicroAd script ---------- */
-                let MicroAdScript = document.createElement('script');
-                MicroAdScript.text = `(function(){
+                    /* ---------- create Inner divDom ---------- */
+                    let MicroAdDiv = document.createElement('div');
+                    MicroAdDiv.id = `compass-fit-${B.adslot}`;
+
+                    /* ---------- create MicroAd script ---------- */
+                    let MicroAdScript = document.createElement('script');
+                    MicroAdScript.text = `(function(){
                 var _lgy_lw = document.createElement("script");
     	            _lgy_lw.type = "text/javascript";
     	            _lgy_lw.charset = "UTF-8";
@@ -116,12 +117,13 @@
     	            _lgy_lw_0.parentNode.insertBefore(_lgy_lw, _lgy_lw_0);
             })();`;
 
-                /* ---------- append Inner Dom & script ---------- */
-                AdBody.appendChild(MicroAdDiv);
-                AdBody.appendChild(MicroAdScript);
+                    /* ---------- append Inner Dom & script ---------- */
+                    AdBody.appendChild(MicroAdDiv);
+                    AdBody.appendChild(MicroAdScript);
 
-                /* ---------- Call initMicroAd Function ----------*/
-                initMicroAd(AdDom, AdBody, B.place, B.wait);
+                    /* ---------- Call initMicroAd Function ----------*/
+                    initMicroAd(AdDom, AdBody, B.place, B.wait);
+                });
             }
         })(window, adsBlock_microad);
     </script>

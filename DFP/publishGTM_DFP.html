@@ -29,7 +29,7 @@
             id: 'div-gpt-ad-1531896988226-8', // DFP adUnit id
             size: [300, 250], // DFP adUnit Size -> exp. one size [336, 280], two size [[336, 280], [300, 250]]...
             mapping: '', // If RWD? [mapping array] : ''
-            dom: '#two', // 廣告要 pendDOM 位置
+            dom: '#one, #two', // 廣告要 pendDOM 位置
             place: 'before', // after, before, html, append, prepend
             stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;', // CSS
             wait: '' // 至少等待幾秒 [setTimeout]
@@ -41,7 +41,7 @@
             id: 'div-gpt-ad-1531896988226-9', // DFP adUnit id
             size: [336, 280], // DFP adUnit Size -> exp. one size [336, 280], two size [[336, 280], [300, 250]]...
             mapping: '', // If RWD? [mapping array] : ''
-            dom: '#DFP-index_rightSideBarFirst_336280', // 廣告要 pendDOM 位置
+            dom: '#three', // 廣告要 pendDOM 位置
             place: 'after', // after, before, html, append, prepend
             stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;', // CSS
             wait: 15 // 至少等待幾秒 [setTimeout]
@@ -124,27 +124,29 @@
             /// ========== [ Create DFP Body DOM ] ========== ///
 
             for (let B of adsBlock) {
-                /* ---------- create Outer divDom ---------- */
-                let AdDom = document.querySelector(B.dom);
-                let AdBody = document.createElement('div');
-                AdBody.id = `DFP-${B.divid}`;
-                AdBody.className = B.divclass;
-                AdBody.style = B.stycss
+                let AdDom = document.querySelectorAll(B.dom).forEach((AdDom) => {
 
-                /* ---------- create Inner divDom ---------- */
-                let AdBodyInnerDiv = document.createElement('div');
-                AdBodyInnerDiv.id = B.id;
+                    /* ---------- create Outer divDom ---------- */
+                    let AdBody = document.createElement('div');
+                    AdBody.id = `DFP-${B.divid}`;
+                    AdBody.className = B.divclass;
+                    AdBody.style = B.stycss
 
-                /* ---------- create Inner script ---------- */
-                let AdBodyInnerScript = document.createElement('script');
-                AdBodyInnerScript.text = `googletag.cmd.push(function() {googletag.display('${B.id}');});`
+                    /* ---------- create Inner divDom ---------- */
+                    let AdBodyInnerDiv = document.createElement('div');
+                    AdBodyInnerDiv.id = B.id;
 
-                /* ---------- append Inner Dom & script ---------- */
-                AdBodyInnerDiv.appendChild(AdBodyInnerScript);
-                AdBody.appendChild(AdBodyInnerDiv);
+                    /* ---------- create Inner script ---------- */
+                    let AdBodyInnerScript = document.createElement('script');
+                    AdBodyInnerScript.text = `googletag.cmd.push(function() {googletag.display('${B.id}');});`
 
-                /* ---------- Call initDfp Function ----------*/
-                initDfp(AdDom, AdBody, B.place, B.wait);
+                    /* ---------- append Inner Dom & script ---------- */
+                    AdBodyInnerDiv.appendChild(AdBodyInnerScript);
+                    AdBody.appendChild(AdBodyInnerDiv);
+
+                    /* ---------- Call initDfp Function ----------*/
+                    initDfp(AdDom, AdBody, B.place, B.wait);
+                });
             }
         })(window, adsBlock);
     </script>

@@ -35,7 +35,7 @@
             divclass: 'makAd', // 廣告區塊 class 名稱
             stycss: 'margin:0', // 廣告區塊 css
             jsname: 'popin', // popin js name
-            dom: '#two', // 廣告要 pendDOM 位置
+            dom: '#one, #two', // 廣告要 pendDOM 位置
             place: 'after', // after, before, html, append, prepend
             wait: 10 // 至少等待幾秒 [setTimeout]
         }];
@@ -78,32 +78,34 @@
                 /// ========== [ Create POPIN Body DOM ] ========== ///
 
             for (let B of adsBlock_popin) {
-                /* ---------- create Outer divDom ---------- */
-                let AdDom = document.querySelector(B.dom);
-                let AdBody = document.createElement('div');
-                AdBody.id = `POPIN-${B.divid}`;
-                AdBody.className = B.divclass;
-                AdBody.style = B.divstycss
+                document.querySelectorAll(B.dom).forEach((AdDom) => {
 
-                /* ---------- create Inner divDom ---------- */
-                let PopinDiv = document.createElement('div');
-                PopinDiv.id = '_popIn_recommend';
+                    /* ---------- create Outer divDom ---------- */
+                    let AdBody = document.createElement('div');
+                    AdBody.id = `POPIN-${B.divid}`;
+                    AdBody.className = B.divclass;
+                    AdBody.style = B.divstycss
 
-                /* ---------- create POPIN script ---------- */
-                let pa = document.createElement('script');
-                pa.type = 'text/javascript';
-                pa.charset = "utf-8";
-                pa.async = true;
-                pa.src = window.location.protocol + `//api.popin.cc/searchbox/${B.jsname}.js`;
-                // let s = document.getElementsByTagName('script')[0];
-                // s.parentNode.insertBefore(pa, s);
+                    /* ---------- create Inner divDom ---------- */
+                    let PopinDiv = document.createElement('div');
+                    PopinDiv.id = '_popIn_recommend';
 
-                /* ---------- append Inner Dom &  popin script ---------- */
-                AdBody.appendChild(PopinDiv);
-                AdBody.appendChild(pa);
+                    /* ---------- create POPIN script ---------- */
+                    let pa = document.createElement('script');
+                    pa.type = 'text/javascript';
+                    pa.charset = "utf-8";
+                    pa.async = true;
+                    pa.src = window.location.protocol + `//api.popin.cc/searchbox/${B.jsname}.js`;
+                    // let s = document.getElementsByTagName('script')[0];
+                    // s.parentNode.insertBefore(pa, s);
 
-                /* ---------- Call initPopin Function ----------*/
-                initPopin(AdDom, AdBody, B.place, B.wait);
+                    /* ---------- append Inner Dom &  popin script ---------- */
+                    AdBody.appendChild(PopinDiv);
+                    AdBody.appendChild(pa);
+
+                    /* ---------- Call initPopin Function ----------*/
+                    initPopin(AdDom, AdBody, B.place, B.wait);
+                });
             }
         })(window, adsBlock_popin);
     </script>

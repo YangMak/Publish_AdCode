@@ -79,27 +79,29 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
     /// ========== [ Create DFP Body DOM ] ========== ///
 
     for (let B of adsBlock) {
-        /* ---------- create Outer divDom ---------- */
-        let AdDom = document.querySelector(B.dom);
-        let AdBody = document.createElement('div');
-        AdBody.id = `DFP-${B.divid}`;
-        AdBody.className = B.divclass;
-        AdBody.style = B.stycss
+        let AdDom = document.querySelectorAll(B.dom).forEach((AdDom) => {
 
-        /* ---------- create Inner divDom ---------- */
-        let AdBodyInnerDiv = document.createElement('div');
-        AdBodyInnerDiv.id = B.id;
+            /* ---------- create Outer divDom ---------- */
+            let AdBody = document.createElement('div');
+            AdBody.id = `DFP-${B.divid}`;
+            AdBody.className = B.divclass;
+            AdBody.style = B.stycss
 
-        /* ---------- create Inner script ---------- */
-        let AdBodyInnerScript = document.createElement('script');
-        AdBodyInnerScript.text = `googletag.cmd.push(function() {googletag.display('${B.id}');});`
+            /* ---------- create Inner divDom ---------- */
+            let AdBodyInnerDiv = document.createElement('div');
+            AdBodyInnerDiv.id = B.id;
 
-        /* ---------- append Inner Dom & script ---------- */
-        AdBodyInnerDiv.appendChild(AdBodyInnerScript);
-        AdBody.appendChild(AdBodyInnerDiv);
+            /* ---------- create Inner script ---------- */
+            let AdBodyInnerScript = document.createElement('script');
+            AdBodyInnerScript.text = `googletag.cmd.push(function() {googletag.display('${B.id}');});`
 
-        /* ---------- Call initDfp Function ----------*/
-        initDfp(AdDom, AdBody, B.place, B.wait);
+            /* ---------- append Inner Dom & script ---------- */
+            AdBodyInnerDiv.appendChild(AdBodyInnerScript);
+            AdBody.appendChild(AdBodyInnerDiv);
+
+            /* ---------- Call initDfp Function ----------*/
+            initDfp(AdDom, AdBody, B.place, B.wait);
+        });
     }
 };
 

@@ -53,7 +53,7 @@
             adclient: 'ca-pub-xxxxxxxxxxxxxxxx',
             adslot: '1234567890',
             //adformat: 'link', // link autorelaxed
-            dom: '#two', // 廣告要 pendDOM 位置
+            dom: '#one, #two', // 廣告要 pendDOM 位置
             place: 'prepend', // after, before, html, append, prepend
             wait: '' // 至少等待幾秒 [setTimeout]
         }, {
@@ -66,7 +66,7 @@
             adhostchannel: '0000000000',
             adclient: 'ca-pub-xxxxxxxxxxxxxxxx',
             adslot: '1234567890',
-            dom: '#Adsense-test-adUnit-1', // 廣告要 pendDOM 位置
+            dom: '#three', // 廣告要 pendDOM 位置
             place: 'after', // after, before, html, append, prepend
             wait: 15 // 至少等待幾秒 [setTimeout]
         }];
@@ -118,35 +118,37 @@
             /// ========== [ Create Adsense Body DOM ] ========== ///
 
             for (let B of adsBlock_adsense) {
-                /* ---------- create Outer divDom ---------- */
-                let AdDom = document.querySelector(B.dom);
-                let AdBody = document.createElement('div');
-                AdBody.id = `Adsense-${B.divid}`;
-                AdBody.className = B.divclass;
-                AdBody.style = B.divstycss
+                let AdDom = document.querySelectorAll(B.dom).forEach((AdDom) => {
 
-                /* ---------- create Inner divDom <ins>  ---------- */
-                let InsTag = document.createElement('ins');
-                InsTag.className = 'adsbygoogle';
-                InsTag.style = B.stycss;
-                InsTag.setAttribute('data-ad_region', 'test');
-                InsTag.setAttribute('data-refresh', 'false');
-                InsTag.setAttribute('data-ad-host', B.adhost);
-                InsTag.setAttribute('data-ad-host-channel', B.adhostchannel);
-                InsTag.setAttribute('data-ad-client', B.adclient);
-                InsTag.setAttribute('data-ad-slot', B.adslot);
-                //InsTag.setAttribute('data-ad-format', B.format);
+                    /* ---------- create Outer divDom ---------- */
+                    let AdBody = document.createElement('div');
+                    AdBody.id = `Adsense-${B.divid}`;
+                    AdBody.className = B.divclass;
+                    AdBody.style = B.divstycss
 
-                /* ---------- create Inner script ---------- */
-                let AdBodyInnerScript = document.createElement('script');
-                AdBodyInnerScript.text = `(adsbygoogle = window.adsbygoogle || []).push({});`;
+                    /* ---------- create Inner divDom <ins>  ---------- */
+                    let InsTag = document.createElement('ins');
+                    InsTag.className = 'adsbygoogle';
+                    InsTag.style = B.stycss;
+                    InsTag.setAttribute('data-ad_region', 'test');
+                    InsTag.setAttribute('data-refresh', 'false');
+                    InsTag.setAttribute('data-ad-host', B.adhost);
+                    InsTag.setAttribute('data-ad-host-channel', B.adhostchannel);
+                    InsTag.setAttribute('data-ad-client', B.adclient);
+                    InsTag.setAttribute('data-ad-slot', B.adslot);
+                    //InsTag.setAttribute('data-ad-format', B.format);
 
-                /* ---------- append Inner Dom <ins> & script ---------- */
-                AdBody.appendChild(InsTag);
-                AdBody.appendChild(AdBodyInnerScript);
+                    /* ---------- create Inner script ---------- */
+                    let AdBodyInnerScript = document.createElement('script');
+                    AdBodyInnerScript.text = `(adsbygoogle = window.adsbygoogle || []).push({});`;
 
-                /* ---------- Call initAdsense Function ----------*/
-                initAdsense(AdDom, AdBody, B.place, B.wait);
+                    /* ---------- append Inner Dom <ins> & script ---------- */
+                    AdBody.appendChild(InsTag);
+                    AdBody.appendChild(AdBodyInnerScript);
+
+                    /* ---------- Call initAdsense Function ----------*/
+                    initAdsense(AdDom, AdBody, B.place, B.wait);
+                });
             }
         })(window, adsBlock_adsense);
     </script>

@@ -37,7 +37,7 @@
             adslot: '347cd23d4303484b',
             adtargetid: '#tenmax_347cd23d4303484b3',
             adtargetpos: 'AFTER',
-            dom: '#two',
+            dom: '#one, #two',
             place: 'after',
             stycss: 'margin:0',
             wait: ''
@@ -45,11 +45,11 @@
             note: '[TEST] TEST 廣告',
             divid: 'tenmax-test',
             divclass: 'makAd',
-            adslot: '347cd23d4303484b',
-            adtargetid: '#tenmax_347cd23d4303484b',
+            adslot: '347cd23d4303484c',
+            adtargetid: '#tenmax_347cd23d4303484c',
             adtargetpos: 'AFTER',
-            dom: '#three',
-            place: 'prepend',
+            dom: '#AdUnit',
+            place: 'after',
             stycss: 'margin:0',
             wait: ''
         }];
@@ -93,39 +93,41 @@
             /// ========== [ Create Adsense Body DOM ] ========== ///
 
             for (let B of adsBlock_tenmax) {
-                /* ---------- create Outer divDom ---------- */
-                let AdDom = document.querySelector(B.dom);
-                let AdBody = document.createElement('div');
-                AdBody.id = `Tenmax-${B.divid}`;
-                AdBody.className = B.divclass;
-                AdBody.style = B.divstycss
+                document.querySelectorAll(B.dom).forEach((AdDom) => {
 
-                /* ---------- create Inner divDom ---------- */
-                let TenmaxDiv = document.createElement('div');
-                TenmaxDiv.id = `tenmax_${B.adslot}`;
+                    /* ---------- create Outer divDom ---------- */
+                    let AdBody = document.createElement('div');
+                    AdBody.id = `Tenmax-${B.divid}`;
+                    AdBody.className = B.divclass;
+                    AdBody.style = B.divstycss
 
-                /* ---------- create Inner divDom <ins>  ---------- */
-                let InsTag = document.createElement('ins');
-                InsTag.className = 'rmax';
-                InsTag.setAttribute('data-rmax-space-id', B.adslot);
-                InsTag.setAttribute('data-rmax-space-type', 'NATIVE');
-                InsTag.setAttribute('data-target-id', `#${TenmaxDiv.id}`);
-                InsTag.setAttribute('data-target-pos', B.adtargetpos);
+                    /* ---------- create Inner divDom ---------- */
+                    let TenmaxDiv = document.createElement('div');
+                    TenmaxDiv.id = `tenmax_${B.adslot}`;
 
-                /* ---------- create Tenmax script ---------- */
-                let TenmaxScripts = document.createElement('script');
-                TenmaxScripts.type = 'text/javascript';
-                TenmaxScripts.charset = "utf-8";
-                TenmaxScripts.async = true;
-                TenmaxScripts.src = '//tenmax-static.cacafly.net/ssp/adsbytenmax.js';
+                    /* ---------- create Inner divDom <ins>  ---------- */
+                    let InsTag = document.createElement('ins');
+                    InsTag.className = 'rmax';
+                    InsTag.setAttribute('data-rmax-space-id', B.adslot);
+                    InsTag.setAttribute('data-rmax-space-type', 'NATIVE');
+                    InsTag.setAttribute('data-target-id', `#${TenmaxDiv.id}`);
+                    InsTag.setAttribute('data-target-pos', B.adtargetpos);
 
-                /* ---------- append Inner Dom <div> <ins> & script ---------- */
-                AdBody.appendChild(TenmaxDiv);
-                AdBody.appendChild(InsTag);
-                AdBody.appendChild(TenmaxScripts);
+                    /* ---------- create Tenmax script !(May not repeat the announcement)---------- */
+                    let TenmaxScripts = document.createElement('script');
+                    TenmaxScripts.type = 'text/javascript';
+                    TenmaxScripts.charset = "utf-8";
+                    TenmaxScripts.async = true;
+                    TenmaxScripts.src = '//tenmax-static.cacafly.net/ssp/adsbytenmax.js';
 
-                /* ---------- Call initTenmax Function ----------*/
-                initTenmax(AdDom, AdBody, B.place, B.wait);
+                    /* ---------- append Inner Dom <div> <ins> & script ---------- */
+                    AdBody.appendChild(TenmaxDiv);
+                    AdBody.appendChild(InsTag);
+                    AdBody.appendChild(TenmaxScripts);
+
+                    /* ---------- Call initTenmax Function ----------*/
+                    initTenmax(AdDom, AdBody, B.place, B.wait);
+                });
             }
         })(window, adsBlock_tenmax);
     </script>

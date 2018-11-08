@@ -37,7 +37,7 @@
             divid: 'dable-infoBottom',
             divclass: 'makAd',
             idnum: '3o5006Xj',
-            dom: '#two',
+            dom: '#one, #two',
             place: 'append',
             stycss: 'margin:0',
             wait: ''
@@ -46,7 +46,7 @@
             divid: 'dable-rightside',
             divclass: 'makAd',
             idnum: '2XnQQEld',
-            dom: '#Dable-dable-infoBottom',
+            dom: '#three',
             place: 'after',
             stycss: '',
             wait: 5
@@ -91,29 +91,31 @@
             /// ========== [ Create Adsense Body DOM ] ========== ///
 
             for (let B of adsBlock_dable) {
-                /* ---------- create Outer divDom ---------- */
-                let AdDom = document.querySelector(B.dom);
-                let AdBody = document.createElement('div');
-                AdBody.id = `Dable-${B.divid}`;
-                AdBody.className = B.divclass;
-                AdBody.style = B.divstycss
+                let AdDom = document.querySelectorAll(B.dom).forEach((AdDom) => {
 
-                /* ---------- create Inner divDom ---------- */
-                let DableDiv = document.createElement('div');
-                DableDiv.id = `dablewidget_${B.idnum}`;
-                DableDiv.setAttribute('data-widget_id', B.idnum);
+                    /* ---------- create Outer divDom ---------- */
+                    let AdBody = document.createElement('div');
+                    AdBody.id = `Dable-${B.divid}`;
+                    AdBody.className = B.divclass;
+                    AdBody.style = B.divstycss
 
-                /* ---------- create Dable script ---------- */
-                let DableScript = document.createElement('script');
-                DableScript.text = `(function(d,a){d[a]=d[a] || function(){(d[a].q=d[a].q || []).push(arguments)};}(window,'dable'));
+                    /* ---------- create Inner divDom ---------- */
+                    let DableDiv = document.createElement('div');
+                    DableDiv.id = `dablewidget_${B.idnum}`;
+                    DableDiv.setAttribute('data-widget_id', B.idnum);
+
+                    /* ---------- create Dable script ---------- */
+                    let DableScript = document.createElement('script');
+                    DableScript.text = `(function(d,a){d[a]=d[a] || function(){(d[a].q=d[a].q || []).push(arguments)};}(window,'dable'));
                 dable('renderWidget', 'dablewidget_${B.idnum}');`;
 
-                /* ---------- append Dable Dom  & script ---------- */
-                DableDiv.appendChild(DableScript);
-                AdBody.appendChild(DableDiv);
+                    /* ---------- append Dable Dom  & script ---------- */
+                    DableDiv.appendChild(DableScript);
+                    AdBody.appendChild(DableDiv);
 
-                /* ---------- Call initDable Function ----------*/
-                initDable(AdDom, AdBody, B.place, B.wait);
+                    /* ---------- Call initDable Function ----------*/
+                    initDable(AdDom, AdBody, B.place, B.wait);
+                });
             }
         })(window, adsBlock_dable);
     </script>
