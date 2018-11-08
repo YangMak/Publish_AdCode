@@ -79,7 +79,7 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
     /// ========== [ Create DFP Body DOM ] ========== ///
 
     for (let B of adsBlock) {
-        let AdDom = document.querySelectorAll(B.dom).forEach((AdDom) => {
+        document.querySelectorAll(B.dom).forEach((AdDom) => {
 
             /* ---------- create Outer divDom ---------- */
             let AdBody = document.createElement('div');
