@@ -30,7 +30,12 @@
   
     <script>
       googletag.cmd.push(function() {
-        googletag.defineSlot('/19597162/info_336280_1', [300, 250], 'div-gpt-ad-1531896988226-8').addService(googletag.pubads());
+        var mapping1 = googletag.sizeMapping().
+                addSize([980, 0], [970, 250]). // 電腦
+                addSize([480, 0], [336, 280]). // mobile
+                addSize([0, 0], [300, 250]).
+            build();
+        googletag.defineSlot('/19597162/info_336280_1', [300, 250], 'div-gpt-ad-1531896988226-8').defineSizeMapping(mapping1).addService(googletag.pubads());
         googletag.pubads().enableSingleRequest();
         googletag.pubads().collapseEmptyDivs();
         googletag.enableServices();
@@ -56,7 +61,7 @@
             defslot: '/19597162/info_336280_1', // DFP adUnit name
             id: 'div-gpt-ad-1531896988226-8', // DFP adUnit id
             size: [300, 250], // DFP adUnit Size -> exp. one size [336, 280], two size [[336, 280], [300, 250]]...
-            mapping: '', // If RWD? [mapping array] : ''
+            mapping: '', // If RWD? [mapping array] : '' ( [[[980, 0],[970, 250]],[[480, 0],[336, 280]], [[0,0], [300, 250]]] )
             dom: '#one, #two', // 廣告要 pendDOM 位置
             place: 'before', // after, before, html, append, prepend
             stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;', // CSS
