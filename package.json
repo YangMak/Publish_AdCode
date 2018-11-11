@@ -1,0 +1,18 @@
+{
+    "name": "publish-adcode",
+    "version": "1.0.0",
+    "description": "Publish advertising network code for GTM collection",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/YangMak/Publish_AdCode.git"
+    },
+    "author": "mak",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/YangMak/Publish_AdCode/issues"
+    },
+    "homepage": "https://github.com/YangMak/Publish_AdCode#readme"
+}
