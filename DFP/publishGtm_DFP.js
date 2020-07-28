@@ -44,7 +44,7 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
     });
 
     /// ========== [ Start Publish_AdCode_DFP main ] ========== ///
-    let popInTasks = [];
+    let DFPTasks = [];
     let isContain = (node, checkNodes) => {
         let isExit = false;
         for (let i = 0, iz = checkNodes.length; i < iz; i++) {
@@ -101,7 +101,7 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
     };
 
     for (let [index, B] of adsBlock.entries()) {
-        class popInGroup {
+        class DFPGroup {
             constructor() {
                 this.containers = [];
             }
@@ -119,10 +119,10 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
                 }, 500);
             }
         };
-        popInTasks[index] = new popInGroup();
-        popInTasks[index].checkDev();
+        DFPTasks[index] = new DFPGroup();
+        DFPTasks[index].checkDev();
     };
-    window.popInTasks = popInTasks;
+    window.DFPTasks = DFPTasks;
 };
 
 /**
