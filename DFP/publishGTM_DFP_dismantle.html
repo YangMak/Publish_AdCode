@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>DFP for GTM</title>
+    <title>DFP for GTM normal-page or infinite-page</title>
     <style>
         .makAd iframe {
             background-color: #faa;
@@ -55,29 +55,27 @@
     <script>
         /// ========== 廣告區塊資訊 (Main Object) ========== ///
         let adsBlock_DFP = [{
-            note: '[首頁] 右側欄第一則 336*280 廣告', // 無作用欄位 類似註解 方便查詢
-            divid: 'index_rightSideBarFirst_336280-0', // 廣告區塊 id 名稱
-            divclass: 'makAd widget', //廣告區塊 class 名稱
-            defslot: '/19597162/info_336280_1', // DFP adUnit name
-            id: 'div-gpt-ad-1531896988226-8', // DFP adUnit id
-            size: [300, 250], // DFP adUnit Size -> exp. one size [336, 280], two size [[336, 280], [300, 250]]...
-            mapping: '', // If RWD? [mapping array] : '' ( [[[980, 0],[970, 250]],[[480, 0],[336, 280]], [[0,0], [300, 250]]] )
-            dom: '#two', // 廣告要 pendDOM 位置
-            place: 'before', // after, before, html, append, prepend
-            stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;', // CSS
-            wait: '' // 至少等待幾秒 [setTimeout]
+            note: '[首頁] 右側欄第一則 336*280 廣告', // 無作用欄位 類似註解 方便查詢 (自訂)
+            divid: 'index_rightSideBarFirst_336280', // 廣告區塊 id 名稱 （自訂）
+            divclass: 'makAd widget', //廣告區塊 class 名稱 （自訂）
+            defslot: '/19597162/info_336280_1', // DFP adUnit name （DFP）
+            id: 'div-gpt-ad-1531896988226-8', // DFP adUnit id （DFP）
+            size: [300, 250], // DFP adUnit Size -> exp. one size [336, 280], two size [[336, 280], [300, 250]]... (DFP)
+            mapping: '', // If RWD? [mapping array] : '' ; => ( [[[980, 0],[970, 250]],[[480, 0],[336, 280]], [[0,0], [300, 250]]] ) (DFP)
+            dom: '#one', // 廣告要 pendDOM 位置 （自訂）
+            place: 'before', // after, before, html, append, prepend （自訂）
+            stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;' // CSS （自訂）
         }, {
             note: '[首頁] 右側欄第2則 336*280 廣告', // 無作用欄位 類似註解 方便查詢
-            divid: 'index_rightSideBarFirst_336280-1', // 廣告區塊 id 名稱
+            divid: 'index_rightSideBarFirst_336280', // 廣告區塊 id 名稱
             divclass: 'makAd widget', //廣告區塊 class 名稱
             defslot: '/19597162/info_336280_2', // DFP adUnit name
             id: 'div-gpt-ad-1531896988226-9', // DFP adUnit id
             size: [336, 280], // DFP adUnit Size -> exp. one size [336, 280], two size [[336, 280], [300, 250]]...
             mapping: '', // If RWD? [mapping array] : ''
-            dom: '#DFP-index_rightSideBarFirst_336280-0', // 廣告要 pendDOM 位置
-            place: 'before', // after, before, html, append, prepend
-            stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;', // CSS
-            wait: '' // 至少等待幾秒 [setTimeout]
+            dom: '#two', // 廣告要 pendDOM 位置
+            place: 'after', // after, before, html, append, prepend
+            stycss: 'margin: 0 0 20px;text-align: center; text-align:-webkit-center;' // CSS
         }];
     </script>
     <script src="../DFP/publishGtm_DFP.js"></script>

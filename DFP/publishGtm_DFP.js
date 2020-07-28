@@ -24,6 +24,7 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
             let adsMainDef = googletag.defineSlot(B.defslot, B.size, B.id);
             let adsUnMapping = adsMainDef.addService(googletag.pubads());
             let adsMapping = adsMainDef.defineSizeMapping(B.mapping).addService(googletag.pubads());
+
             B.mapping == '' ? adsUnMapping : adsMapping;
         }
         /// ========== [ DFP event ] ========== ///
@@ -42,67 +43,86 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
         googletag.enableServices();
     });
 
-    /// ========== [ Create init function ] ========== ///
-
-    let initDfp = (AdDom, AdBody, place, times) => {
-        times ? times : 0;
-        let CheckAdDom = () => {
-            if (AdDom) {
-                switch (place) {
-                    case 'before':
-                        AdDom.parentNode.insertBefore(AdBody, AdDom);
-                        break;
-                    case 'after':
-                        AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
-                        break;
-                    case 'html':
-                        AdDom.innerHTML = '';
-                        AdDom.appendChild(AdBody);
-                        break;
-                    case 'append':
-                        AdDom.appendChild(AdBody);
-                        break;
-                    case 'prepend':
-                        AdDom.insertBefore(AdBody, AdDom.firstChild);
-                        break;
-                }
-            } else {
-                if (times > 0) {
-                    times--;
-                    setTimeout(CheckAdDom, 500);
-                }
+    /// ========== [ Start Publish_AdCode_DFP main ] ========== ///
+    let popInTasks = [];
+    let isContain = (node, checkNodes) => {
+        let isExit = false;
+        for (let i = 0, iz = checkNodes.length; i < iz; i++) {
+            if (node === checkNodes[i]) {
+                isExit = true;
+                break;
             }
         }
-        CheckAdDom();
-    }
+        return isExit;
+    };
+    let setAdBody = (divId, divClass, styCss, id) => {
 
-    /// ========== [ Create DFP Body DOM ] ========== ///
+        /* ---------- create Outer divDom ---------- */
+        let AdBody = document.createElement('DIV');
+        AdBody.id = `DFP-${divId}`;
+        AdBody.className = divClass;
+        AdBody.style = styCss;
 
-    for (let B of adsBlock) {
-        document.querySelectorAll(B.dom).forEach((AdDom) => {
+        /* ---------- create Inner divDom ---------- */
+        let AdBodyInnerDiv = document.createElement('DIV');
+        AdBodyInnerDiv.id = id;
 
-            /* ---------- create Outer divDom ---------- */
-            let AdBody = document.createElement('div');
-            AdBody.id = `DFP-${B.divid}`;
-            AdBody.className = B.divclass;
-            AdBody.style = B.stycss
+        /* ---------- create Inner script ---------- */
+        let AdBodyInnerScript = document.createElement('SCRIPT');
+        AdBodyInnerScript.text = `googletag.cmd.push(function() {googletag.display('${id}');});`
 
-            /* ---------- create Inner divDom ---------- */
-            let AdBodyInnerDiv = document.createElement('div');
-            AdBodyInnerDiv.id = B.id;
+        /* ---------- append Inner Dom & script ---------- */
+        AdBodyInnerDiv.appendChild(AdBodyInnerScript);
+        AdBody.appendChild(AdBodyInnerDiv);
 
-            /* ---------- create Inner script ---------- */
-            let AdBodyInnerScript = document.createElement('script');
-            AdBodyInnerScript.text = `googletag.cmd.push(function() {googletag.display('${B.id}');});`
+        return AdBody;
+    };
+    /* ---------- [ Create init function ] ---------- */
 
-            /* ---------- append Inner Dom & script ---------- */
-            AdBodyInnerDiv.appendChild(AdBodyInnerScript);
-            AdBody.appendChild(AdBodyInnerDiv);
+    let initDFP = (AdDom, AdBody, place) => {
+        switch (place) {
+            case 'before':
+                AdDom.parentNode.insertBefore(AdBody, AdDom);
+                break;
+            case 'after':
+                AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
+                break;
+            case 'html':
+                while (AdDom.firstChild) AdDom.removeChild(AdDom.firstChild);
+                AdDom.appendChild(AdBody);
+                break;
+            case 'append':
+                AdDom.appendChild(AdBody);
+                break;
+            case 'prepend':
+                AdDom.insertBefore(AdBody, AdDom.firstChild);
+                break;
+        }
+    };
 
-            /* ---------- Call initDfp Function ----------*/
-            initDfp(AdDom, AdBody, B.place, B.wait);
-        });
-    }
+    for (let [index, B] of adsBlock.entries()) {
+        class popInGroup {
+            constructor() {
+                this.containers = [];
+            }
+            checkDev() {
+                let IntervalID = window.setInterval(() => {
+                    let nodes = document.querySelectorAll(B.dom);
+                    for (let i = 0, iz = nodes.length; i < iz; i++) {
+                        let node = nodes[i];
+                        if (!isContain(node, this.containers)) {
+                            this.containers.push(node);
+                            let AdBody = setAdBody(B.divid, B.divclass, B.stycss, B.id);
+                            initDFP(node, AdBody, B.place);
+                        }
+                    }
+                }, 500);
+            }
+        };
+        popInTasks[index] = new popInGroup();
+        popInTasks[index].checkDev();
+    };
+    window.popInTasks = popInTasks;
 };
 
 /**
@@ -112,7 +132,7 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
 
 const MainInit = (() => {
     /// ========== [ Initialization & Check format of adsBlock_DFP ] ========== ///    
-    let standKey = ['defslot', 'divclass', 'divid', 'dom', 'id', 'mapping', 'note', 'place', 'size', 'stycss', 'wait'];
+    let standKey = ['defslot', 'divclass', 'divid', 'dom', 'id', 'mapping', 'note', 'place', 'size', 'stycss'];
     if (typeof(adsBlock_DFP) === 'undefined') {
         let error_msg = 'Not Main Object [adsBlock_DFP]!'
         console.log(error_msg);
