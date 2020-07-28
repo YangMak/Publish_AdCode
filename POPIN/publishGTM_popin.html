@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Popin for GTM</title>
+    <title>Popin for GTM normal-page or infinite-page</title>
 </head>
 
 <body>
@@ -29,85 +29,108 @@
     -->
 
     <script>
-        let adsBlock_popin = [{
-            note: '[TEST] TEST 廣告', // 無作用欄位 類似註解 方便查詢
-            divid: 'test-adUnit', // 廣告區塊 id 名稱
-            divclass: 'makAd', // 廣告區塊 class 名稱
-            stycss: 'margin:0', // 廣告區塊 css
-            jsname: 'makWEB', // popin js name
-            dom: '#one, #two', // 廣告要 pendDOM 位置
-            place: 'after', // after, before, html, append, prepend
-            wait: 10 // 至少等待幾秒 [setTimeout]
+        let jsName = 'makWEB'; // popIn js name （popIn）
+        let adsBlock_popIn = [{
+            note: '[TEST] TEST 廣告', // 無作用欄位 類似註解 方便查詢 (自訂)
+            divid: 'test-adUnit', // 廣告區塊 id 名稱 （自訂）
+            divclass: 'makAd', // 廣告區塊 class 名稱 （自訂）
+            stycss: 'margin:0', // 廣告區塊 css （自訂）
+            popInId: '_popIn_recommend', //popIn模組 id 名稱 （自訂）
+            poInClass: '', //popIn模組 class 名稱 （自訂）
+            dom: '#one, #two', // 廣告要 pendDOM 位置 （自訂）
+            place: 'after' // after, before, html, append, prepend （自訂）
         }];
 
 
-        const MainFunction = ((w, adsBlock) => {
+        const MainFunction = ((w, adsBlock, jsName) => {
+            /* ---------- create popIn script ---------- */
+            let pa = document.createElement('SCRIPT');
+            pa.type = 'text/javascript';
+            pa.charset = 'utf-8';
+            pa.async = 'true';
+            pa.src = window.location.protocol + `//api.popin.cc/searchbox/${jsName}.js`;
+            let s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(pa, s);
 
-            /// ========== [ Create init function ] ========== ///
-
-            let initPopin = (AdDom, AdBody, place, times) => {
-                    let CheckAdDom_popin = function() {
-                        if (AdDom) {
-                            switch (place) {
-                                case 'before':
-                                    AdDom.parentNode.insertBefore(AdBody, AdDom);
-                                    break;
-                                case 'after':
-                                    AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
-                                    break;
-                                case 'html':
-                                    AdDom.innerHTML = '';
-                                    AdDom.appendChild(AdBody);
-                                    break;
-                                case 'append':
-                                    AdDom.appendChild(AdBody);
-                                    break;
-                                case 'prepend':
-                                    AdDom.insertBefore(AdBody, AdDom.firstChild);
-                                    break;
-                            }
-                        } else {
-                            if (times > 0) {
-                                times--;
-                                setTimeout(CheckAdDom_popin, 500);
-                            }
-                        }
+            /// ========== [ Start Publish_AdCode_DFP main ] ========== ///
+            let popInTasks = [];
+            let isContain = (node, checkNodes) => {
+                let isExit = false;
+                for (let i = 0, iz = checkNodes.length; i < iz; i++) {
+                    if (node === checkNodes[i]) {
+                        isExit = true;
+                        break;
                     }
-                    CheckAdDom_popin();
                 }
-                /// ========== [ Create POPIN Body DOM ] ========== ///
+                return isExit;
+            };
+            let setAdBody = (divId, divClass, styCss, popInId = '', popInClass = '') => {
+                /* ---------- create Outer divDom ---------- */
+                let AdBody = document.createElement('DIV');
+                AdBody.id = `popIn-${divId}`;
+                AdBody.className = divClass;
+                AdBody.style = styCss;
 
-            for (let B of adsBlock_popin) {
-                document.querySelectorAll(B.dom).forEach((AdDom) => {
+                /* ---------- create Inner divDom ---------- */
+                let popInDiv = document.createElement('DIV');
+                popInDiv.id = popInId;
+                popInDiv.className = popInClass;
+                //popInDiv.className = (!!popInClass) ? popInClass : '';
+                popInDiv.setAttribute('data-url', window.location.href);
 
-                    /* ---------- create Outer divDom ---------- */
-                    let AdBody = document.createElement('div');
-                    AdBody.id = `POPIN-${B.divid}`;
-                    AdBody.className = B.divclass;
-                    AdBody.style = B.divstycss
+                /* ---------- append Inner Dom &  popIn script ---------- */
+                AdBody.appendChild(popInDiv);
 
-                    /* ---------- create Inner divDom ---------- */
-                    let PopinDiv = document.createElement('div');
-                    PopinDiv.id = '_popIn_recommend';
+                return AdBody;
+            };
+            /* ---------- [ Create init function ] ---------- */
 
-                    /* ---------- create POPIN script ---------- */
-                    let pa = document.createElement('script');
-                    pa.type = 'text/javascript';
-                    pa.charset = "utf-8";
-                    pa.async = true;
-                    pa.src = window.location.protocol + `//api.popin.cc/searchbox/${B.jsname}.js`;
-                    // let s = document.getElementsByTagName('script')[0];
-                    // s.parentNode.insertBefore(pa, s);
+            let initPopIn = (AdDom, AdBody, place) => {
+                switch (place) {
+                    case 'before':
+                        AdDom.parentNode.insertBefore(AdBody, AdDom);
+                        break;
+                    case 'after':
+                        AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
+                        break;
+                    case 'html':
+                        while (AdDom.firstChild) AdDom.removeChild(AdDom.firstChild);
+                        AdDom.appendChild(AdBody);
+                        break;
+                    case 'append':
+                        AdDom.appendChild(AdBody);
+                        break;
+                    case 'prepend':
+                        AdDom.insertBefore(AdBody, AdDom.firstChild);
+                        break;
+                }
+            };
 
-                    /* ---------- append Inner Dom &  popin script ---------- */
-                    AdBody.appendChild(PopinDiv);
-                    AdBody.appendChild(pa);
+            for (let [index, B] of adsBlock.entries()) {
+                class popInGroup {
+                    constructor() {
+                        this.containers = [];
+                    }
+                    checkDev() {
+                        let IntervalID = window.setInterval(() => {
+                            let nodes = document.querySelectorAll(B.dom);
+                            for (let i = 0, iz = nodes.length; i < iz; i++) {
+                                let node = nodes[i];
+                                if (!isContain(node, this.containers)) {
+                                    this.containers.push(node);
+                                    let AdBody = setAdBody(B.divid, B.divclass, B.stycss, B.popInId, B.popInClass);
+                                    initPopIn(node, AdBody, B.place);
+                                }
+                            }
+                        }, 500);
+                    }
+                };
+                popInTasks[index] = new popInGroup();
+                popInTasks[index].checkDev();
+            };
+            window.popInTasks = popInTasks;
 
-                    /* ---------- Call initPopin Function ----------*/
-                    initPopin(AdDom, AdBody, B.place, B.wait);
-                });
-            }
-        })(window, adsBlock_popin);
+        })(window, adsBlock_popIn, jsName);
     </script>
 
 </body>
