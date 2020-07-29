@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Adsense for GTM</title>
+    <title>Adsense for GTM normal-page or infinite-page</title>
     <style>
         .makAd iframe {
             background-color: #faa;
@@ -42,7 +42,7 @@
 
     <script>
         /// ========== 廣告區塊資訊 (Main Object) ========== ///
-        let adsBlock_adsense = [{
+        let adsBlock_Adsense = [{
             note: '[TEST] TEST 廣告', // 無作用欄位 類似註解 方便查詢
             divid: 'test-adUnit-1', // 廣告區塊 id 名稱
             divclass: 'makAd', // 廣告區塊 class 名稱
@@ -54,8 +54,7 @@
             adslot: '1234567890',
             //adformat: 'link', // link autorelaxed
             dom: '#one, #two', // 廣告要 pendDOM 位置
-            place: 'prepend', // after, before, html, append, prepend
-            wait: '' // 至少等待幾秒 [setTimeout]
+            place: 'prepend' // after, before, html, append, prepend
         }, {
             note: '[TEST] TEST 廣告', // 無作用欄位 類似註解 方便查詢
             divid: 'test-adUnit-2', // 廣告區塊 id 名稱
@@ -67,8 +66,7 @@
             adclient: 'ca-pub-xxxxxxxxxxxxxxxx',
             adslot: '1234567890',
             dom: '#three', // 廣告要 pendDOM 位置
-            place: 'after', // after, before, html, append, prepend
-            wait: 15 // 至少等待幾秒 [setTimeout]
+            place: 'after' // after, before, html, append, prepend
         }];
 
         const MainFunction = ((w, adsBlock) => {
@@ -81,76 +79,97 @@
             asLib.src = "//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
             document.head.appendChild(asLib);
 
-            /// ========== [ Create init function ] ========== ///
-
-            let initAdsense = (AdDom, AdBody, place, times) => {
-                times ? times : 0;
-                let CheckAdDom_adsense = function() {
-                    if (AdDom) {
-                        switch (place) {
-                            case 'before':
-                                AdDom.parentNode.insertBefore(AdBody, AdDom);
-                                break;
-                            case 'after':
-                                AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
-                                break;
-                            case 'html':
-                                AdDom.innerHTML = '';
-                                AdDom.appendChild(AdBody);
-                                break;
-                            case 'append':
-                                AdDom.appendChild(AdBody);
-                                break;
-                            case 'prepend':
-                                AdDom.insertBefore(AdBody, AdDom.firstChild);
-                                break;
-                        }
-                    } else {
-                        if (times > 0) {
-                            times--;
-                            setTimeout(CheckAdDom_adsense, 500);
-                        }
+            /// ========== [ Start Publish_AdCode_Adsense main ] ========== ///
+            let AdsenseTasks = [];
+            let isContain = (node, checkNodes) => {
+                let isExit = false;
+                for (let i = 0, iz = checkNodes.length; i < iz; i++) {
+                    if (node === checkNodes[i]) {
+                        isExit = true;
+                        break;
                     }
                 }
-                CheckAdDom_adsense();
+                return isExit;
+            };
+            let setAdBody = (divId, divClass, divStyCss, adStyCss, adHost, adHostChannel, adClient, adSlot) => {
+                /* ---------- create Outer divDom ---------- */
+                let AdBody = document.createElement('DIV');
+                AdBody.id = `Adsense-${divId}`;
+                AdBody.className = divClass;
+                AdBody.style = divStyCss;
+
+                /* ---------- create Inner divDom <ins>  ---------- */
+                let insTag = document.createElement('INS');
+                insTag.className = 'adsbygoogle';
+                insTag.style = adStyCss;
+                insTag.setAttribute('data-ad_region', 'test');
+                insTag.setAttribute('data-refresh', 'false');
+                insTag.setAttribute('data-ad-host', adHost);
+                insTag.setAttribute('data-ad-host-channel', adHostChannel);
+                insTag.setAttribute('data-ad-client', adClient);
+                insTag.setAttribute('data-ad-slot', adSlot);
+
+                /* ---------- create Inner script ---------- */
+                let AdBodyInnerScript = document.createElement('SCRIPT');
+                AdBodyInnerScript.text = `(adsbygoogle = window.adsbygoogle || []).push({});`;
+
+                /* ---------- append Inner Dom <ins> & script ---------- */
+                AdBody.appendChild(insTag);
+                AdBody.appendChild(AdBodyInnerScript);
+
+                return AdBody;
+            }
+
+            /// ========== [ Create init function ] ========== ///
+
+            let initAdsense = (AdDom, AdBody, place) => {
+                switch (place) {
+                    case 'before':
+                        AdDom.parentNode.insertBefore(AdBody, AdDom);
+                        break;
+                    case 'after':
+                        AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
+                        break;
+                    case 'html':
+                        while (AdDom.firstChild) AdDom.removeChild(AdDom.firstChild);
+                        AdDom.appendChild(AdBody);
+                        break;
+                    case 'append':
+                        AdDom.appendChild(AdBody);
+                        break;
+                    case 'prepend':
+                        AdDom.insertBefore(AdBody, AdDom.firstChild);
+                        break;
+                }
             }
 
             /// ========== [ Create Adsense Body DOM ] ========== ///
 
-            for (let B of adsBlock_adsense) {
-                document.querySelectorAll(B.dom).forEach((AdDom) => {
+            for (let [index, B] of adsBlock.entries()) {
+                class AdsenseGroup {
+                    constructor() {
+                        this.containers = [];
+                    }
+                    checkDev() {
+                        let IntervalID = window.setInterval(() => {
+                            let nodes = document.querySelectorAll(B.dom);
+                            for (let i = 0, iz = nodes.length; i < iz; i++) {
+                                let node = nodes[i];
+                                if (!isContain(node, this.containers)) {
+                                    this.containers.push(node);
+                                    let AdBody = setAdBody(B.divid, B.divclass, B.divstycss, B.stycss, B.adhost, B.adhostchannel, B.adclient, B.adslot);
+                                    initAdsense(node, AdBody, B.place);
+                                }
+                            }
+                        }, 500);
+                    }
+                };
+                AdsenseTasks[index] = new AdsenseGroup();
+                AdsenseTasks[index].checkDev();
+            };
+            window.AdsenseTasks = AdsenseTasks;
 
-                    /* ---------- create Outer divDom ---------- */
-                    let AdBody = document.createElement('div');
-                    AdBody.id = `Adsense-${B.divid}`;
-                    AdBody.className = B.divclass;
-                    AdBody.style = B.divstycss
-
-                    /* ---------- create Inner divDom <ins>  ---------- */
-                    let InsTag = document.createElement('ins');
-                    InsTag.className = 'adsbygoogle';
-                    InsTag.style = B.stycss;
-                    InsTag.setAttribute('data-ad_region', 'test');
-                    InsTag.setAttribute('data-refresh', 'false');
-                    InsTag.setAttribute('data-ad-host', B.adhost);
-                    InsTag.setAttribute('data-ad-host-channel', B.adhostchannel);
-                    InsTag.setAttribute('data-ad-client', B.adclient);
-                    InsTag.setAttribute('data-ad-slot', B.adslot);
-                    //InsTag.setAttribute('data-ad-format', B.format);
-
-                    /* ---------- create Inner script ---------- */
-                    let AdBodyInnerScript = document.createElement('script');
-                    AdBodyInnerScript.text = `(adsbygoogle = window.adsbygoogle || []).push({});`;
-
-                    /* ---------- append Inner Dom <ins> & script ---------- */
-                    AdBody.appendChild(InsTag);
-                    AdBody.appendChild(AdBodyInnerScript);
-
-                    /* ---------- Call initAdsense Function ----------*/
-                    initAdsense(AdDom, AdBody, B.place, B.wait);
-                });
-            }
-        })(window, adsBlock_adsense);
+        })(window, adsBlock_Adsense);
     </script>
 </body>
 
