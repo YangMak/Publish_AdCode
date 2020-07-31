@@ -65,7 +65,7 @@
                         AdDom.parentNode.insertBefore(AdBody, AdDom.nextSibling);
                         break;
                     case 'html':
-                        AdDom.innerHTML = '';
+                        while (AdDom.firstChild) AdDom.removeChild(AdDom.firstChild);
                         AdDom.appendChild(AdBody);
                         break;
                     case 'append':
