@@ -36,7 +36,7 @@
             divclass: 'makAd', // 廣告區塊 class 名稱 （自訂）
             stycss: 'margin:0', // 廣告區塊 css （自訂）
             popInId: '_popIn_recommend', //popIn模組 id 名稱 （自訂）
-            poInClass: '', //popIn模組 class 名稱 （自訂）
+            popInClass: '', //popIn模組 class 名稱 （自訂）
             dom: '#one, #two', // 廣告要 pendDOM 位置 （自訂）
             place: 'after' // after, before, html, append, prepend （自訂）
         }];
@@ -109,7 +109,13 @@
             for (let [index, B] of adsBlock.entries()) {
                 class popInGroup {
                     constructor() {
+                        this.adInfo = {
+                            AdId: B.popInId,
+                            AdClass: B.popInClass
+                        };
+                        this.adUnit = [];
                         this.containers = [];
+                        this.insertMethod = B.place;
                     }
                     checkDev() {
                         let IntervalID = window.setInterval(() => {
@@ -119,6 +125,7 @@
                                 if (!isContain(node, this.containers)) {
                                     this.containers.push(node);
                                     let AdBody = setAdBody(B.divid, B.divclass, B.stycss, B.popInId, B.popInClass);
+                                    this.adUnit.push(AdBody);
                                     initPopIn(node, AdBody, B.place);
                                 }
                             }
