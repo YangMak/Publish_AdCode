@@ -103,7 +103,15 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
     for (let [index, B] of adsBlock.entries()) {
         class DFPGroup {
             constructor() {
+                this.adInfo = {
+                    AdSlot: B.defslot,
+                    AdId: B.id,
+                    AdSize: B.size,
+                    AdMapping: B.mapping
+                };
+                this.adUnit = [];
                 this.containers = [];
+                this.insertMethod = B.place;
             }
             checkDev() {
                 let IntervalID = window.setInterval(() => {
@@ -113,6 +121,7 @@ const CreateDFP_AdSlot = (w, adsBlock) => {
                         if (!isContain(node, this.containers)) {
                             this.containers.push(node);
                             let AdBody = setAdBody(B.divid, B.divclass, B.stycss, B.id);
+                            this.adUnit.push(AdBody);
                             initDFP(node, AdBody, B.place);
                         }
                     }
