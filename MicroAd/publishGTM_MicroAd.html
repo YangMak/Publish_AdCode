@@ -122,7 +122,12 @@
             for (let [index, B] of adsBlock.entries()) {
                 class MicroAdGroup {
                     constructor() {
+                        this.adInfo = {
+                            AdSlot: B.adslot
+                        };
+                        this.adUnit = [];
                         this.containers = [];
+                        this.insertMethod = B.place;
                     }
                     checkDev() {
                         let IntervalID = window.setInterval(() => {
@@ -132,6 +137,7 @@
                                 if (!isContain(node, this.containers)) {
                                     this.containers.push(node);
                                     let AdBody = setAdBody(B.divid, B.divclass, B.stycss, B.adslot);
+                                    this.adUnit.push(AdBody);
                                     initMicroAd(node, AdBody, B.place);
                                 }
                             }
