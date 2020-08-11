@@ -146,7 +146,15 @@
             for (let [index, B] of adsBlock.entries()) {
                 class AdsenseGroup {
                     constructor() {
+                        this.adInfo = {
+                            AdHost: B.adhost,
+                            AdHostChanel: B.adhostchannel,
+                            AdClient: B.adclient,
+                            AdSlot: B.adslot
+                        };
+                        this.adUnit = [];
                         this.containers = [];
+                        this.insertMethod = B.place;
                     }
                     checkDev() {
                         let IntervalID = window.setInterval(() => {
@@ -156,6 +164,7 @@
                                 if (!isContain(node, this.containers)) {
                                     this.containers.push(node);
                                     let AdBody = setAdBody(B.divid, B.divclass, B.divstycss, B.stycss, B.adhost, B.adhostchannel, B.adclient, B.adslot);
+                                    this.adUnit.push(AdBody);
                                     initAdsense(node, AdBody, B.place);
                                 }
                             }
