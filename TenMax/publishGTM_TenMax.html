@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>TanMax for Gtm normal-page</title>
+    <title>TenMax for Gtm normal-page</title>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 </head>
 
@@ -22,7 +22,7 @@
 
     <script>
         let pvmax_siteId = 'xoxoxoxo-wwww-oooo-0000-xxxxxxxxxxxx';
-        let adsBlock_tanmax = [{
+        let adsBlock_tenmax = [{
             note: '[TEST] TEST 廣告',
             divid: 'tenmax-test',
             divclass: 'makAd',
@@ -44,10 +44,10 @@
 
         const MainFunction = ((w, adsBlock, siteId) => {
 
-            /// ========== [ Create TanMax head defineSlot Lib ] ========== ///
+            /// ========== [ Create TenMax head defineSlot Lib ] ========== ///
 
-            /* ---------- create TanMax script ---------- */
-            let TanMaxScriptInit = () => {
+            /* ---------- create TenMax script ---------- */
+            let TenMaxScriptInit = () => {
                 let TenMaxScript = document.createElement('SCRIPT');
                 TenMaxScript.text = `
                     var _pvmax = { siteId: "${siteId}" };
@@ -65,7 +65,7 @@
 
             /// ========== [ Create init function ] ========== ///
 
-            let initTanMax = (AdDom, AdBody, place, times, isEnd) => {
+            let initTenMax = (AdDom, AdBody, place, times, isEnd) => {
                 switch (place) {
                     case 'before':
                         AdDom.parentNode.insertBefore(AdBody, AdDom);
@@ -84,11 +84,11 @@
                         AdDom.insertBefore(AdBody, AdDom.firstChild);
                         break;
                 };
-                if (isEnd) TanMaxScriptInit();
+                if (isEnd) TenMaxScriptInit();
             };
 
-            /// ========== [ Start Publish_AdCode_TanMax main ] ========== ///
-            let TanMaxTasks = [];
+            /// ========== [ Start Publish_AdCode_TenMax main ] ========== ///
+            let TenMaxTasks = [];
             let isContain = (node, checkNodes) => {
                 let isExit = false;
                 for (let i = 0, iz = checkNodes.length; i < iz; i++) {
@@ -103,22 +103,22 @@
             let setAdBody = (divId, divClass, divStyCss, AdClass, widgetId) => {
                 /* ---------- create Outer divDom ---------- */
                 let AdBody = document.createElement('DIV');
-                AdBody.id = `TanMax-${divId}`;
+                AdBody.id = `TenMax-${divId}`;
                 AdBody.className = divClass;
                 AdBody.style = divStyCss;
 
                 /* ---------- create Inner divDom ---------- */
-                let TanMaxDiv = document.createElement('DIV');
-                TanMaxDiv.className = AdClass;
-                TanMaxDiv.setAttribute('data-widget-id', widgetId);
+                let TenMaxDiv = document.createElement('DIV');
+                TenMaxDiv.className = AdClass;
+                TenMaxDiv.setAttribute('data-widget-id', widgetId);
                 /* ---------- append Inner Dom ---------- */
-                AdBody.appendChild(TanMaxDiv);
+                AdBody.appendChild(TenMaxDiv);
 
                 return AdBody;
             };
 
             for (let [index, B] of adsBlock.entries()) {
-                class TanMaxGroup {
+                class TenMaxGroup {
                     constructor() {
                         this.adInfo = {
                             SiteId: w.pvmax_siteId,
@@ -129,7 +129,7 @@
                         this.insertMethod = B.place;
                     }
                     checkDev(isEnd) {
-                        // let IntervalID = window.setInterval(() => {  // TanMax can't infinite
+                        // let IntervalID = window.setInterval(() => {  // TenMax can't infinite
                         let nodes = document.querySelectorAll(B.dom);
                         for (let i = 0, iz = nodes.length; i < iz; i++) {
                             let node = nodes[i];
@@ -137,19 +137,19 @@
                                 this.containers.push(node);
                                 let AdBody = setAdBody(B.divid, B.divclass, B.stycss, B.adclass, B.widgetId);
                                 this.adUnit.push(AdBody);
-                                initTanMax(node, AdBody, B.place, isEnd);
+                                initTenMax(node, AdBody, B.place, isEnd);
                             }
                         }
                         // }, 500);
                     }
                 };
                 let isEndItem = index === adsBlock.length ? true : false;
-                TanMaxTasks[index] = new TanMaxGroup();
-                TanMaxTasks[index].checkDev(isEndItem);
+                TenMaxTasks[index] = new TenMaxGroup();
+                TenMaxTasks[index].checkDev(isEndItem);
             };
-            window.TanMaxTasks = TanMaxTasks;
+            window.TenMaxTasks = TenMaxTasks;
 
-        })(window, adsBlock_tanmax, pvmax_siteId);
+        })(window, adsBlock_tenmax, pvmax_siteId);
     </script>
 </body>
 
